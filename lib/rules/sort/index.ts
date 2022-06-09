@@ -21,7 +21,7 @@ module.exports = {
     docs: {
       description: 'A simple organizer for ordering hooks.',
       category: 'Non-matching declaration order.',
-      url: 'https://github.com/hiukky/eslint-plugin-hooks/blob/main/docs/rules/sort.md',
+      url: 'https://github.com/sergalexand/eslint-plugin-react-hooks-order/blob/main/docs/rules/sort.md',
       recommended: false,
     },
     fixable: undefined,
