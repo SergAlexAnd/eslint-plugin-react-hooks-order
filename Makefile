@@ -25,12 +25,15 @@ git-remove-local-branches:
 git-history:
 	git log --graph --decorate --oneline
 
+build:
+	npm run-script build
+
 #semantic versioning
 patch-version: # x.x.*
-	npm version patch && git push --tag && git push && npm publish
+	make build && npm version patch && git push --tag && git push && npm publish
 
 minor-version: # x.*.x
-	npm version minor && git push --tag && git push && npm publish
+	make build && npm version minor && git push --tag && git push && npm publish
 
 major-version: # *.x.x
-	npm version major && git push --tag && git push && npm publish
+	make build && npm version major && git push --tag && git push && npm publish
