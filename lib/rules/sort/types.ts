@@ -1,3 +1,5 @@
+import { Comment } from 'estree';
+
 export type Node = {
   type:
     | 'Identifier'
@@ -9,35 +11,41 @@ export type Node = {
     | 'VariableDeclaration'
     | 'CallExpression'
     | 'VariableDeclarator'
-    | 'MemberExpression'
-  name: string
+    | 'MemberExpression';
+  name: string;
   body: {
-    body: any[]
-  }
-  init: Node[]
-  callee: Node
-  expression: Node
-  property: Node
+    body: any[];
+  };
+  init: Node[];
+  callee: Node;
+  expression: Node;
+  property: Node;
   declaration: {
     declarations: {
-      init: Node
-    }[]
-  }
+      init: Node;
+    }[];
+  };
   declarations: {
-    init: Node
+    init: Node;
   }[] &
-    Node[]
-}
+    Node[];
+};
 
 export type Program = {
-  body: Node[]
-}
+  body: Node[];
+};
 
 export type Options = {
-  groups: string[]
-}
+  groups: string[];
+};
 
-export type Context = {
-  report(node: Node, message: string): void
-  options: Options[]
-}
+export type HooksSource = {
+  node: Node;
+  hook: Node;
+  comments: Comment[];
+};
+
+export type HooksMetadata = {
+  type: Node['type'];
+  declaration: Node;
+} & Pick<HooksSource, 'node' | 'comments'>;
