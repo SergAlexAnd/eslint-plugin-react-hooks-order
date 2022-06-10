@@ -1,14 +1,12 @@
-/**
- * @fileoverview A simple organizer for ordering hooks.
- */
-
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { RuleTester, Rule, Linter } from 'eslint';
+import { Linter } from 'eslint';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { format, Options } from 'prettier';
 import * as rule from '@rules/sort';
 
-const Tester = new RuleTester();
+const prettierOptions: Options = {
+  parser: 'babel',
+};
 
 const parserOptions: Linter.ParserOptions = {
   ecmaVersion: 6,
@@ -23,10 +21,6 @@ const options = [
     groups: rule.DEFAULT_GROUPS,
   },
 ];
-
-const prettierOptions: Options = {
-  parser: 'babel',
-};
 
 const firstTest = {
   code: format(
@@ -66,7 +60,7 @@ const firstTest = {
   options,
 };
 
-const secondTest = {
+export const secondTest = {
   code: format(
     `
      import { useState, useEffect, useContext,useRef, createContext } from 'react'
@@ -106,25 +100,74 @@ const secondTest = {
   options,
 };
 
-Tester.run('react-hooks-order/sort', rule as unknown as Rule.RuleModule, {
-  valid: [
+export const thirdTest = {
+  code: format(
+    `
+     import { useState, useEffect, useContext,useRef, createContext } from 'react'
+     const context = createContext({});
+     export function ComponentB() {
+       useEffect(() => {
+         console.log('Hello')
+       }, [])
+       const countRef = useRef<HookType>(0)
+     }
+     `,
+    prettierOptions
+  ),
+  output: format(
+    `
+     import { useState, useEffect, useContext, useRef, createContext } from "react";
+     const context = createContext({});
+     export function ComponentB() {
+      const countRef = useRef<HookType>(0);
+       useEffect(() => {
+         console.log("Hello");
+       }, []);
+     }
+     `,
+    prettierOptions
+  ),
+  errors: [
     {
-      code: `
-       function ComponentA() {
-         const [todos, dispatch] = useReducer(todosReducer)
-         const [count, setCount] = useState(0)
-         const memoizedCallback = useCallback(() => {
-           doSomething(a, b);
-         },[a, b])
-         useEffect(() => {
-           document.title = 'Hello'
-         }, [])
-       }
-       export default ComponentA
-      `,
-      parserOptions,
-      options,
+      message: 'Non-matching declaration order. useEffect comes after useRef.',
+    },
+    {
+      message: 'Non-matching declaration order. useRef comes before useEffect.',
     },
   ],
-  invalid: [firstTest, secondTest],
-});
+  parserOptions,
+  options,
+};
+
+// ! valid case
+
+const validTest = {
+  code: `
+   function ComponentA() {
+     const [todos, dispatch] = useReducer(todosReducer)
+     const [count, setCount] = useState(0)
+     const memoizedCallback = useCallback(() => {
+       doSomething(a, b);
+     },[a, b])
+     useEffect(() => {
+       document.title = 'Hello'
+     }, [])
+   }
+   export default ComponentA
+  `,
+  parserOptions,
+  options,
+};
+
+export const TestData = {
+  cases: {
+    valid: [validTest],
+    invalid: [
+      firstTest,
+      // secondTest,
+      // thirdTest,
+    ],
+  },
+  options,
+  parserOptions,
+};
